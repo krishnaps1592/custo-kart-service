@@ -1,6 +1,8 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongo = require('mongodb');
+
+const customerRouter  = require('./routes/customer');
 var mongoClient = mongo.MongoClient;
 const app = express();
 const mongoUrl = "mongodb://localhost:27017/customer"
@@ -30,6 +32,7 @@ mongoClient.connect(mongoUrl, function (error, client) {
 })
 
 app.use(bodyParser.json())
+app.use('/customers',customerRouter)
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -45,26 +48,26 @@ app.get('/test', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 
-app.post('/customers', (req, res) => {
-    console.log(req.body)
-    database.collection("customer-info").insertOne(req.body, function (err, doc) {
-        if (err) {
-            manageError(res, err.message, "Failed to create new product.");
-        } else {
-            res.status(201).json(req.body);
-        }
-    });
-})
+// app.post('/customers', (req, res) => {
+//     console.log(req.body)
+//     database.collection("customer-info").insertOne(req.body, function (err, doc) {
+//         if (err) {
+//             manageError(res, err.message, "Failed to create new product.");
+//         } else {
+//             res.status(201).json(req.body);
+//         }
+//     });
+// })
 
-app.get('/customers', (req, res) => {
-    database.collection("customer-info").find({}).toArray(function (error, data) {
-        if (error) {
-            manageError(res, error.message, "Fetch all failed")
-        } else {
-            res.status(200).json(data)
-        }
-    })
-})
+// app.get('/customers', (req, res) => {
+//     database.collection("customer-info").find({}).toArray(function (error, data) {
+//         if (error) {
+//             manageError(res, error.message, "Fetch all failed")
+//         } else {
+//             res.status(200).json(data)
+//         }
+//     })
+// })
 
 function manageError(res, reason, message, code) {
     console.log("Error: " + reason);
